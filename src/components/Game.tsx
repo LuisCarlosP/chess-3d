@@ -330,9 +330,23 @@ export function Game() {
             )}
           </div>
 
+          {/* Bot thinking siempre visible */}
+          {isThinking && (
+            <div style={{ fontSize: '13px', color: '#ffff00', marginBottom: showControls ? '8px' : '0', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <RiLoader4Line size={14} className="spinning" />
+              Bot thinking...
+            </div>
+          )}
+
+          {/* Selected piece siempre visible */}
+          {selectedPiece && (
+            <div style={{ fontSize: '13px', color: '#90ee90', marginBottom: showControls ? '8px' : '0' }}>
+              Selected piece: {selectedPiece.type}
+            </div>
+          )}
+
         {showControls && (
           <>
-        
         <div style={{ marginBottom: '12px' }}>
           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
             <input 
@@ -497,21 +511,7 @@ export function Game() {
           </>
         )}
         
-        {isThinking && showControls && (
-          <div style={{ fontSize: '13px', color: '#ffff00', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <RiLoader4Line size={14} className="spinning" />
-            Bot thinking...
-          </div>
-        )}
-        
-        {selectedPiece && showControls && (
-          <div style={{ fontSize: '13px', color: '#90ee90', marginBottom: '8px' }}>
-            Selected piece: {selectedPiece.type}
-          </div>
-        )}
-        
         {showControls && (
-          <>
         <button 
           onClick={() => setShowResetModal(true)}
           style={{
@@ -533,6 +533,7 @@ export function Game() {
           <IoReload size={14} />
           Reset Game
         </button>
+        )}
         </>
         )}
         </div>
