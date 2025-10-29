@@ -29,3 +29,28 @@ button:hover {
   transform: scale(1.05);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  button:hover {
+    transform: none;
+  }
+  
+  /* Disable text selection on mobile */
+  * {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  input[type="checkbox"] {
+    -webkit-user-select: auto;
+    user-select: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+}

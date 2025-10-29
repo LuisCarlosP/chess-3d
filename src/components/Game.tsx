@@ -3,7 +3,7 @@ import { OrbitControls } from '@react-three/drei';
 import { useState, useEffect, useRef } from 'react';
 import { GiChessKing, GiChessQueen } from 'react-icons/gi';
 import { IoReload, IoShuffle } from 'react-icons/io5';
-import { FaRobot, FaUser, FaCircle } from 'react-icons/fa';
+import { FaRobot, FaUser, FaCircle, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { RiLoader4Line } from 'react-icons/ri';
 import { ChessBoard } from './ChessBoard';
 import { ChessPiece } from './ChessPiece';
@@ -32,6 +32,7 @@ export function Game() {
   const [showResetModal, setShowResetModal] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [gameOver, setGameOver] = useState<'victory' | 'defeat' | null>(null);
+  const [showControls, setShowControls] = useState(true);
   const engineRef = useRef<ChessEngine | null>(null);
 
   useEffect(() => {
@@ -263,47 +264,101 @@ export function Game() {
       {/* UI Overlay */}
       <div style={{
         position: 'absolute',
-        top: 20,
-        left: 20,
+        top: '10px',
+        left: '10px',
+        right: '10px',
         color: 'white',
         fontFamily: 'Arial, sans-serif',
-        background: 'rgba(0, 0, 0, 0.7)',
-        padding: '20px',
-        borderRadius: '10px',
-        backdropFilter: 'blur(10px)',
-        minWidth: '250px'
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '10px',
+        pointerEvents: 'none'
       }}>
-        <h2 style={{ margin: '0 0 15px 0', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <GiChessKing size={28} />
-          Chess 3D
-        </h2>
+        {/* Panel principal */}
+        <div style={{
+          background: 'rgba(0, 0, 0, 0.85)',
+          padding: '12px',
+          borderRadius: '8px',
+          backdropFilter: 'blur(10px)',
+          maxWidth: '320px',
+          pointerEvents: 'auto'
+        }}>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between',
+            marginBottom: '10px'
+          }}>
+            <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '8px', fontSize: '18px' }}>
+              <GiChessKing size={22} />
+              Chess 3D
+            </h2>
+            <button
+              onClick={() => setShowControls(!showControls)}
+              style={{
+                background: 'rgba(76, 175, 80, 0.2)',
+                border: '1px solid #4CAF50',
+                borderRadius: '5px',
+                color: '#4CAF50',
+                padding: '6px 10px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                fontSize: '12px',
+                transition: 'all 0.2s'
+              }}
+            >
+              {showControls ? <FaChevronUp size={12} /> : <FaChevronDown size={12} />}
+              {showControls ? 'Hide' : 'Show'}
+            </button>
+          </div>
+
+          {/* Turno siempre visible */}
+          <div style={{ fontSize: '14px', marginBottom: showControls ? '8px' : '0', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <strong>Turn:</strong> 
+            {turn === actualPlayerColor ? (
+              <>
+                <FaUser size={12} />
+                <span>{turn === 'white' ? 'White' : 'Black'} (You)</span>
+              </>
+            ) : (
+              <>
+                {vsBot ? <FaRobot size={12} /> : <FaUser size={12} />}
+                <span>{turn === 'white' ? 'White' : 'Black'} {vsBot ? '(Bot)' : ''}</span>
+              </>
+            )}
+          </div>
+
+        {showControls && (
+          <>
         
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+        <div style={{ marginBottom: '12px' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
             <input 
               type="checkbox" 
               checked={vsBot} 
               onChange={(e) => setVsBot(e.target.checked)}
-              style={{ width: '18px', height: '18px' }}
+              style={{ width: '16px', height: '16px' }}
             />
-            <FaRobot size={16} />
+            <FaRobot size={14} />
             <span>Play vs Bot</span>
           </label>
         </div>
 
         {vsBot && (
           <>
-            <div style={{ marginBottom: '15px' }}>
-              <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px' }}>
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px' }}>
                 <strong>Play as:</strong>
               </label>
-              <div style={{ display: 'flex', gap: '8px' }}>
+              <div style={{ display: 'flex', gap: '6px' }}>
                 <button
                   onClick={() => setPlayerColor('white')}
                   style={{
                     flex: 1,
-                    padding: '10px',
-                    fontSize: '13px',
+                    padding: '8px 4px',
+                    fontSize: '12px',
                     background: playerColor === 'white' ? '#4CAF50' : '#2a2a2a',
                     color: 'white',
                     border: playerColor === 'white' ? '2px solid #4CAF50' : '1px solid #555',
@@ -312,19 +367,19 @@ export function Game() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '6px',
+                    gap: '4px',
                     transition: 'all 0.2s'
                   }}
                 >
-                  <FaCircle size={10} color="#e8d4b0" />
+                  <FaCircle size={8} color="#e8d4b0" />
                   <span>White</span>
                 </button>
                 <button
                   onClick={() => setPlayerColor('black')}
                   style={{
                     flex: 1,
-                    padding: '10px',
-                    fontSize: '13px',
+                    padding: '8px 4px',
+                    fontSize: '12px',
                     background: playerColor === 'black' ? '#4CAF50' : '#2a2a2a',
                     color: 'white',
                     border: playerColor === 'black' ? '2px solid #4CAF50' : '1px solid #555',
@@ -333,19 +388,19 @@ export function Game() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '6px',
+                    gap: '4px',
                     transition: 'all 0.2s'
                   }}
                 >
-                  <FaCircle size={10} color="#5c4033" />
+                  <FaCircle size={8} color="#5c4033" />
                   <span>Black</span>
                 </button>
                 <button
                   onClick={() => setPlayerColor('random')}
                   style={{
                     flex: 1,
-                    padding: '10px',
-                    fontSize: '13px',
+                    padding: '8px 4px',
+                    fontSize: '12px',
                     background: playerColor === 'random' ? '#4CAF50' : '#2a2a2a',
                     color: 'white',
                     border: playerColor === 'random' ? '2px solid #4CAF50' : '1px solid #555',
@@ -354,31 +409,31 @@ export function Game() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '6px',
+                    gap: '4px',
                     transition: 'all 0.2s'
                   }}
                 >
-                  <IoShuffle size={14} />
+                  <IoShuffle size={12} />
                   <span>Random</span>
                 </button>
               </div>
             </div>
 
-            <div style={{ marginBottom: '15px' }}>
-              <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px' }}>
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px' }}>
                 <strong>Difficulty: {
                   botDifficulty === 1 ? 'Easy' :
                   botDifficulty === 2 ? 'Medium' :
                   botDifficulty === 3 ? 'Hard' : 'Expert'
                 }</strong>
               </label>
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', gap: '6px', justifyContent: 'space-between' }}>
                 <button
                   onClick={() => setBotDifficulty(1)}
                   style={{
                     flex: 1,
-                    padding: '10px',
-                    fontSize: '13px',
+                    padding: '8px 4px',
+                    fontSize: '11px',
                     background: botDifficulty === 1 ? '#4CAF50' : '#2a2a2a',
                     color: 'white',
                     border: botDifficulty === 1 ? '2px solid #4CAF50' : '1px solid #555',
@@ -393,8 +448,8 @@ export function Game() {
                   onClick={() => setBotDifficulty(2)}
                   style={{
                     flex: 1,
-                    padding: '10px',
-                    fontSize: '13px',
+                    padding: '8px 4px',
+                    fontSize: '11px',
                     background: botDifficulty === 2 ? '#4CAF50' : '#2a2a2a',
                     color: 'white',
                     border: botDifficulty === 2 ? '2px solid #4CAF50' : '1px solid #555',
@@ -409,8 +464,8 @@ export function Game() {
                   onClick={() => setBotDifficulty(3)}
                   style={{
                     flex: 1,
-                    padding: '10px',
-                    fontSize: '13px',
+                    padding: '8px 4px',
+                    fontSize: '11px',
                     background: botDifficulty === 3 ? '#4CAF50' : '#2a2a2a',
                     color: 'white',
                     border: botDifficulty === 3 ? '2px solid #4CAF50' : '1px solid #555',
@@ -425,8 +480,8 @@ export function Game() {
                   onClick={() => setBotDifficulty(4)}
                   style={{
                     flex: 1,
-                    padding: '10px',
-                    fontSize: '13px',
+                    padding: '8px 4px',
+                    fontSize: '11px',
                     background: botDifficulty === 4 ? '#4CAF50' : '#2a2a2a',
                     color: 'white',
                     border: botDifficulty === 4 ? '2px solid #4CAF50' : '1px solid #555',
@@ -442,40 +497,27 @@ export function Game() {
           </>
         )}
         
-        <div style={{ fontSize: '16px', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <strong>Turn:</strong> 
-          {turn === actualPlayerColor ? (
-            <>
-              <FaUser size={14} />
-              <span>{turn === 'white' ? 'White' : 'Black'} (You)</span>
-            </>
-          ) : (
-            <>
-              {vsBot ? <FaRobot size={14} /> : <FaUser size={14} />}
-              <span>{turn === 'white' ? 'White' : 'Black'} {vsBot ? '(Bot)' : ''}</span>
-            </>
-          )}
-        </div>
-        
-        {isThinking && (
-          <div style={{ fontSize: '14px', color: '#ffff00', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <RiLoader4Line size={16} className="spinning" />
+        {isThinking && showControls && (
+          <div style={{ fontSize: '13px', color: '#ffff00', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <RiLoader4Line size={14} className="spinning" />
             Bot thinking...
           </div>
         )}
         
-        {selectedPiece && (
-          <div style={{ fontSize: '14px', color: '#90ee90', marginBottom: '10px' }}>
+        {selectedPiece && showControls && (
+          <div style={{ fontSize: '13px', color: '#90ee90', marginBottom: '8px' }}>
             Selected piece: {selectedPiece.type}
           </div>
         )}
         
+        {showControls && (
+          <>
         <button 
           onClick={() => setShowResetModal(true)}
           style={{
-            marginTop: '15px',
-            padding: '10px 20px',
-            fontSize: '14px',
+            marginTop: '12px',
+            padding: '8px 16px',
+            fontSize: '13px',
             background: '#4CAF50',
             color: 'white',
             border: 'none',
@@ -485,68 +527,71 @@ export function Game() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '8px'
+            gap: '6px'
           }}
         >
-          <IoReload size={16} />
+          <IoReload size={14} />
           Reset Game
         </button>
+        </>
+        )}
+        </div>
+
+        {/* Panel de capturas */}
+        {showControls && (
+        <div style={{
+          background: 'rgba(0, 0, 0, 0.85)',
+          padding: '12px',
+          borderRadius: '8px',
+          backdropFilter: 'blur(10px)',
+          maxWidth: '320px',
+          pointerEvents: 'auto'
+        }}>
+          <h3 style={{ margin: '0 0 10px 0', fontSize: '15px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <GiChessQueen size={18} />
+            Captured
+          </h3>
+          <div style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
+            <div style={{
+              width: '16px',
+              height: '16px',
+              borderRadius: '50%',
+              background: '#2a2a2a',
+              border: '2px solid #555'
+            }} />
+            <strong>Black:</strong> {capturedPieces.black.length}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
+            <div style={{
+              width: '16px',
+              height: '16px',
+              borderRadius: '50%',
+              background: '#e8d4b0',
+              border: '2px solid #d4b896'
+            }} />
+            <strong>White:</strong> {capturedPieces.white.length}
+          </div>
+        </div>
+        )}
       </div>
 
       <div style={{
         position: 'absolute',
-        top: 20,
-        right: 20,
-        color: 'white',
-        fontFamily: 'Arial, sans-serif',
-        background: 'rgba(0, 0, 0, 0.7)',
-        padding: '20px',
-        borderRadius: '10px',
-        backdropFilter: 'blur(10px)',
-        minWidth: '180px'
-      }}>
-        <h3 style={{ margin: '0 0 15px 0', fontSize: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <GiChessQueen size={20} />
-          Captured
-        </h3>
-        <div style={{ marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{
-            width: '20px',
-            height: '20px',
-            borderRadius: '50%',
-            background: '#2a2a2a',
-            border: '2px solid #555'
-          }} />
-          <strong>Black:</strong> {capturedPieces.black.length}
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{
-            width: '20px',
-            height: '20px',
-            borderRadius: '50%',
-            background: '#e8d4b0',
-            border: '2px solid #d4b896'
-          }} />
-          <strong>White:</strong> {capturedPieces.white.length}
-        </div>
-      </div>
-
-      <div style={{
-        position: 'absolute',
-        bottom: 20,
+        bottom: '10px',
         left: '50%',
         transform: 'translateX(-50%)',
         color: 'white',
-        fontSize: '12px',
+        fontSize: '11px',
         background: 'rgba(0, 0, 0, 0.5)',
-        padding: '10px 20px',
+        padding: '8px 15px',
         borderRadius: '5px',
-        textAlign: 'center'
+        textAlign: 'center',
+        maxWidth: 'calc(100vw - 20px)'
       }}>
-        <div style={{ marginBottom: '5px' }}>
+        <div style={{ marginBottom: '4px' }}>
           Left click: Select | Drag: Rotate | Scroll: Zoom
         </div>
-        <div style={{ fontSize: '10px', color: '#aaa' }}>
+        <div style={{ fontSize: '9px', color: '#aaa' }}>
           © 2025 Luis Carlos Picado Rojas. All rights reserved.
         </div>
       </div>
