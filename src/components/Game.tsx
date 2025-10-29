@@ -241,7 +241,7 @@ export function Game() {
         <pointLight position={[0, 10, 0]} intensity={0.4} color="#ffffff" />
         <hemisphereLight args={['#ffffff', '#222222', 0.3]} />
 
-        <ChessBoard onSquareClick={handleSquareClick} validMoves={validMoves} />
+        <ChessBoard onSquareClick={handleSquareClick} validMoves={validMoves} pieces={pieces} />
         
         {pieces.map(piece => (
           <ChessPiece
